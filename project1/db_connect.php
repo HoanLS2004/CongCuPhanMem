@@ -9,7 +9,7 @@ $conn = new mysqli($host, $username, $password, $database);
 
 // Kiểm tra kết nối
 if ($conn->connect_error) {
-    die("Kết nối đến cơ sở dữ liệu thất bạihhh: " . $conn->connect_error);
+    die("Kết nối đến cơ sở dữ liệu thất bạihhhsssssdddd: " . $conn->connect_error);
 }
 
 // Thiết lập charset để hỗ trợ tiếng Việt
