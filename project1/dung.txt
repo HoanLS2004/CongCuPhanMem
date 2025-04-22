@@ -1,0 +1,71 @@
+
+TẢI CODE VỀ MÁY
+Git clone <link githup(go to file)student>:tải code về
+Sudo mv <tenfile> /var/www/html/<tenproject ta tạo ra>:chuyển vào thư mục máy ảo
+Nhập “ip a” lấy ip
+Rồi lên forcefire nhập “https://<ip a>/project1/login.php
+Roi vô máy thật nhập: http://192.168.10.106/project1/login.php
+Vitual doman
+Mở file cấu hình apache
+1.Tạo file cấu hình domain: sudo nano /etc/apache2/sites-available/project1.conf
+2. Thêm nội dung sau: <VirtualHost *:80>
+    ServerName project1.local
+    DocumentRoot /var/www/html/project1
+
+    <Directory /var/www/html/project1>
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+3.Kích hoạt cấu hình + restart Apache:
+sudo a2ensite project2.conf
+sudo systemctl reload apache2
+4.mở file: C:\Windows\System32\drivers\etc\hosts
+5.thêm dòng này ở cuối (mở bằng notepad): 192.168.10.106 project1.local
+6. giờ mở máy thật avf nhập: http://project1.local/login.php
+TẢI MYSQL
+1.	Cài đặt MySQL trên máy ảo
+sudo apt update
+sudo apt install mysql-server
+--- đảm bảo MySQL đang chạy: sudo systemctl status mysql
+2.	Cho phép MySQL lắng nghe trên địa chỉ IP ngoài localhost
+sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+--- Tìm dòng: bind-address = 127.0.0.1
+-- Và sửa thành: bind-address = 0.0.0.0
+sudo systemctl restart mysql-- khởi động lại MySQL
+3.	Tạo user MySQL cho phép truy cập từ xa
+sudo mysql
+-- Tạo một user:
+CREATE USER 'tenuser'@'%' IDENTIFIED BY 'matkhau';
+GRANT ALL PRIVILEGES ON *.* TO 'tenuser'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+EXIT;
+4.	Mở cổng MySQL trên firewall máy ảo (mặc định là cổng 3306)
+sudo ufw allow 3306/tcp
+sudo ufw reload
+5.	Tìm địa chỉ IP của máy ảo: ip a
+/////// mysql -h 192.168.56.101 -u tenuser -p(Điền đúng IP máy ảo + username + password bạn đã tạo.)
+phpMyAdmin (chạy qua trình duyệt) chạy như nào?
+1.	Cài đặt phpMyAdmin: sudo apt install phpmyadmin
+---- Trong quá trình cài đặt:
+•	Chọn Apache2 bằng cách nhấn Space để đánh dấu, rồi Enter.
+•	Khi được hỏi có cấu hình db cho phpMyAdmin không → chọn Yes.
+•	Nhập mật khẩu MySQL root (hoặc để trống nếu bạn dùng sudo mysql).
+2.	Kích hoạt phpMyAdmin trong Apache
+sudo ln -s /etc/phpmyadmin/apache.conf /etc/apache2/conf-available/phpmyadmin.conf
+sudo a2enconf phpmyadmin
+sudo systemctl reload apache2
+3.	Truy cập phpMyAdmin
+http://localhost/phpmyadmin
+4.	Trên máy thật:ip a
+--- http://192.168.10.106/phpmyadmin
+5.	Đăng nhập
+•  Username: user MySQL bạn đã tạo (tenuser hoặc root)
+•  Password: mật khẩu tương ứng
+6.	Mở filewall nếu cần
+sudo ufw allow 80/tcp
+sudo ufw reload
+
+
+
+
